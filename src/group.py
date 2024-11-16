@@ -1,8 +1,6 @@
 from typing import Dict, Set
 
-from click import group
-
-from collect import RawParticipant, collect_participants
+from collect import RawParticipant
 from objectiu import objective_level
 from dataclasses import dataclass
 
