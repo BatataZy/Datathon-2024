@@ -96,7 +96,3 @@ def participant_to_group(participant:RawParticipant) -> Group:
     interests = set(participant.interests)
 
     return Group(ids, friend_registration, preferred_languages, availability, objective, preferred_team_size, interest_in_challenges, roles, experience_level, year_of_study, programming_skills, hackathons_done, interests)
-
-groups = [participant_to_group(participant) for participant in collect_participants("/home/max/Datathon/Datathon-2024/data/datathon_participants.json")]
-
-print(groups[0], groups[1], groups[0] + groups[1], sep="\n \n")
