@@ -15,18 +15,16 @@ def selecció_capitans(L:list)->list[str]:
             votos_equipos[1] += 1
         else:
             votos_equipos[2] += 1
-            
+
     rel_2 = votos_equipos[0] / (votos_equipos[0] + votos_equipos[1] + votos_equipos[2])
     rel_3 = votos_equipos[1] / (votos_equipos[0] + votos_equipos[1] + votos_equipos[2])
     rel_4 = votos_equipos[2] / (votos_equipos[0] + votos_equipos[1] + votos_equipos[2])
+
     n_teams = int((len(L)/2)*rel_2 + (len(L)/3)*rel_3 + (len(L)/4)*rel_4) + 1
 
-    teams_h = {f'team{i+1}': L[i] for i in range(n_teams//2)}
+    for i in range(n_teams//2):
+        globals()[f'team{i+1}'] = L[i]
 
-    print(teams_h)
-
-         
-         
 def ordenar_popularidad(L:list)->list[str]:
     L_ = sorted(L, key=lambda v: v[-1])
     return L_
