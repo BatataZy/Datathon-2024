@@ -68,11 +68,3 @@ participants: list[RawParticipant] = collect_participants(yogi.read(str)) # "C:/
 for participant in participants:
     print(participant.objective)
     print(classify_goal(participant.objective))
-
-# Hey, I'm Rosa! For this datathon, my objective is to come out with a learning mentality. 
-# I want to dive deeper into data analysis and try new tools to enhance my skills. 
-# I'd love to challenge myself to build complex projects and troubleshoot problems.
-#  I'm not particularly worried about winning or taking the top spot, but I do hope to get exposure to new data manipulation 
-# techniques and frameworks. By the end of this datathon, I'd like to feel confident in taking on more ambitious projects and 
-# having a fresh perspective to approach data science problems.
-[2, 3, 0] # What happens in the "not particularly worried about winning?""
