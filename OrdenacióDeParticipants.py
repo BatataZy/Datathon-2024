@@ -15,6 +15,7 @@ def selecció_capitans(L:list)->list[str]:
             votos_equipos[1] += 1
         else:
             votos_equipos[2] += 1
+            
     rel_2 = votos_equipos[0] / (votos_equipos[0] + votos_equipos[1] + votos_equipos[2])
     rel_3 = votos_equipos[1] / (votos_equipos[0] + votos_equipos[1] + votos_equipos[2])
     rel_4 = votos_equipos[2] / (votos_equipos[0] + votos_equipos[1] + votos_equipos[2])
