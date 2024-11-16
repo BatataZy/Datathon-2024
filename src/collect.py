@@ -44,8 +44,4 @@ def collect_participants(path: str) -> list[Participant]:
 
     return participants
 
-    
-print(collect_participants("/home/max/Datathon/AEDChallenge/data/datathon_participants.json")[0])
-
-
 
