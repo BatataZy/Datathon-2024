@@ -1,40 +1,72 @@
 from typing import Dict
 import json
 
+class RawParticipant:
+    
+    id: str
+
+    #User presentation
+    introduction: str
+    name: str
+    age: int
+    email: str
+
+    #Don't know what to do yet
+    fun_fact: str
+    future_excitement: str
+    technical_project: str
+
+    #Ordered list of main points
+    friend_registration: list[str]
+    preferred_languages: list[str]
+    availability: Dict[str, bool]
+    objective: str
+    preferred_team_size: int
+    interest_in_challenges: list[str]
+    preferred_role: str
+    experience_level: str
+    year_of_study: str
+    programming_skills: Dict[str, int]
+    hackathons_done: int
+    interests: list[str]
+    university: str
+
+    #Useless
+    shirt_size: str
+    dietary_restrictions: str
+
 class Participant:
     
     id: str
 
+    #User presentation
     name: str
-    email: str
-    shirt_size: str
     age: int
-    year_of_study: str
-    university: str
-    dietary_restrictions: str
-    interests: list[str]
+    email: str
+
+    #Ordered list of main points
+    friend_registration: list[str]
+    preferred_languages: list[str]
+    availability: Dict[str, bool]
+    objective: int
+    preferred_team_size: int
+    interest_in_challenges: list[str]
     preferred_role: str
     experience_level: str
-    hackathons_done: str
-    objective: str
-    introduction: str
-    technical_project: str
-    future_excitement: str
-    fun_fact: str
-    preferred_languages: list[str]
-    friend_registration: list[str]
-    preferred_team_size: str
-    availability: Dict[str, bool]
+    year_of_study: str
     programming_skills: Dict[str, int]
-    interest_in_challenges: list[str]
+    hackathons_done: int
+    interests: list[str]
+    university: str
 
-def collect_participants(path: str) -> list[Participant]:
+
+def collect_participants(path: str) -> list[RawParticipant]:
 
     participants = []
 
     try: 
         for x in json.load(open(path)):
-            participants.append(Participant(**x))
+            participants.append(RawParticipant(**x))
 
     except: 
         raise Exception(f"There was an error loading the participants. Are you using the correct path and file?")
