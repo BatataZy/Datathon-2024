@@ -74,5 +74,3 @@ def collect_participants(path: str) -> list[RawParticipant]:
         raise Exception(f"There was an error loading the participants. Are you using the correct path and file?")
 
     return participants
-
-print(collect_participants("/home/max/Datathon/Datathon-2024/data/datathon_participants.json"))
