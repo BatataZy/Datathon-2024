@@ -1,5 +1,6 @@
 import re
 from collect import collect_participants
+import yogi
 
 def classify_goal(text: str) -> int:
     """
@@ -54,6 +55,8 @@ def classify_goal(text: str) -> int:
 
     return option
 
-participants = collect_participants("C:/Users/GABO.LOPEZ/Documents/GitHub/AEDChallenge/data")
+
+
+participants = collect_participants(yogi.read(int)) # "/home/max/Datathon/AEDChallenge/data/datathon_participants.json"
 print(participants)
 

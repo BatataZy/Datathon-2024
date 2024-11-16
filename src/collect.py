@@ -10,7 +10,7 @@ class Participant:
 
     name: str
     email: str
-
+    shirt_size: str
     age: int
     year_of_study: str
     university: str
