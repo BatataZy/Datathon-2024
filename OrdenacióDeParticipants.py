@@ -1,4 +1,4 @@
-def selecció_capitans(L:list)->list[str]:
+def selecció_capitans(L:list) -> None:
     #24 es el último elemento de la lista, la popularidad, si se lo añadimos al final de cada perfil
     #19 es el elemento que describe la cantidad de equipos deseada por cada participante
     votos_equipos = [0,0,0]

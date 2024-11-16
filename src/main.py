@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+from friends import 
+def main() -> None:
+    ...
+=======
 
 import yogi
 from collect import collect_participants
@@ -9,6 +14,7 @@ def main() -> None:
 
     print(participant_to_group(participants[3]).friend_registration)
 
+>>>>>>> 869d93b8fe628a788ec95616ad223076e61e1d43
     # PRIMER MIREM ELS CASOS QUE S'HAN DE COMPLIR SÍ O SÍ
 
     # DESPRÉS ELS QUE SÓN MOLT IMPORTANT
