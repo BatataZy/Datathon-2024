@@ -7,7 +7,7 @@ from dataclasses import dataclass
 @dataclass
 class Group:
 
-    participants: list[str]
+    ids: list[str]
 
     #Ordered list of main points
     friend_registration: Set[str]
@@ -25,13 +25,13 @@ class Group:
     university: Dict[str, int]
 
     #Group generator function from participant data
-    def __init__(self, participants, friend_registration, preferred_languages, availability, objective, remaining_team_size, interest_in_challenges, roles, experience_level, year_of_study, programming_skills, hackathons_done, interests, university):
-        self.participants = participants
+    def __init__(self, ids, friend_registration, preferred_languages, availability, objective, preferred_team_size, interest_in_challenges, roles, experience_level, year_of_study, programming_skills, hackathons_done, interests, university):
+        self.ids = ids
         self.friend_registration = friend_registration
         self.preferred_languages = preferred_languages
         self.availability = availability
         self.objective = objective
-        self.remaining_team_size = remaining_team_size
+        self.preferred_team_size = preferred_team_size
         self.interest_in_challenges = interest_in_challenges
         self.roles = roles
         self.experience_level = experience_level
@@ -43,20 +43,24 @@ class Group:
 
     def __add__(self, other):
         return Group(
-            self.participants + other.participans,
-            self.friend_registration & self.friend_registration,
-            self.preferred_languages & self.preferred_languages,
-            self.availability 
+            self.ids + other.ids,
+            self.friend_registration & other.friend_registration,
+            self.preferred_languages & other.preferred_languages,
+            self.availability | other.availability,
+            (self.objective*len(self.participants) + other.objective*len(other.participant))/(len(self.participants) + len(other.participans)),
+            (self.preferred_team_size*len(self.participants) + self.preferred_team_size*len(other.participant))/(len(self.participants) + len(other.participans)),
+            self.interest_in_challenges + other.interest_in_challenges,
+            
         )
 
 def participant_to_group(participant:RawParticipant) -> Group:
 
-    participants = [participant.id]
+    ids = [participant.id]
     friend_registration = set(participant.friend_registration)
     preferred_languages = set(participant.preferred_languages)
-    availability = (i for i in participant.availability)
+    availability = set(i for i in list(participant.availability) if participant.availability.get(i) == True)
     objective = objective_level(participant.objective)
-    remaining_team_size = participant.preferred_team_size - 1
+    preferred_team_size = participant.preferred_team_size
     interest_in_challenges = dict((i, 1) for i in participant.interest_in_challenges)
     roles = [participant.preferred_role]
     
@@ -78,4 +82,4 @@ def participant_to_group(participant:RawParticipant) -> Group:
     interests = participant.interests
     university = dict([(participant.university, 1)])
 
-    return Group(participants, friend_registration, preferred_languages, availability, objective, remaining_team_size, interest_in_challenges, roles, experience_level, year_of_study, programming_skills, hackathons_done, interests, university)
+    return Group(ids, friend_registration, preferred_languages, availability, objective, preferred_team_size, interest_in_challenges, roles, experience_level, year_of_study, programming_skills, hackathons_done, interests, university)
