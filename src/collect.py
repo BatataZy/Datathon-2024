@@ -1,6 +1,9 @@
 from typing import Dict
 import json
+from dataclasses import dataclass
 
+
+@dataclass
 class RawParticipant:
     
     id: str
@@ -59,7 +62,6 @@ class Participant:
     interests: list[str]
     university: str
 
-
 def collect_participants(path: str) -> list[RawParticipant]:
 
     participants = []
@@ -72,5 +74,3 @@ def collect_participants(path: str) -> list[RawParticipant]:
         raise Exception(f"There was an error loading the participants. Are you using the correct path and file?")
 
     return participants
-
-
