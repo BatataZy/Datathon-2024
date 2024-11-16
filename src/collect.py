@@ -38,21 +38,16 @@ class RawParticipant:
     shirt_size: str
     dietary_restrictions: str
 
-class Participant:
-    
-    id: str
+class Group:
 
-    #User presentation
-    name: str
-    age: int
-    email: str
+    participants: list[str]
 
     #Ordered list of main points
     friend_registration: list[str]
     preferred_languages: list[str]
     availability: Dict[str, bool]
     objective: int
-    preferred_team_size: int
+    remaining_team_size: int
     interest_in_challenges: list[str]
     preferred_role: str
     experience_level: str

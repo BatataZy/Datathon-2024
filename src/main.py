@@ -1,5 +1,6 @@
 
 def main() -> None:
+    ...
     # PRIMER MIREM ELS CASOS QUE S'HAN DE COMPLIR SÍ O SÍ
 
     # DESPRÉS ELS QUE SÓN MOLT IMPORTANT
