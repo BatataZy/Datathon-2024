@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Set
 import json
 from dataclasses import dataclass
 
@@ -19,7 +19,7 @@ class RawParticipant:
     technical_project: str
 
     #Ordered list of main points
-    friend_registration: set[str]
+    friend_registration: list[str]
     preferred_languages: list[str]
     availability: Dict[str, bool]
     objective: str

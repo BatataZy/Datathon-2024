@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Set
 
 from collect import RawParticipant
 from objectiu import objective_level
@@ -10,7 +10,7 @@ class Group:
     participants: list[str]
 
     #Ordered list of main points
-    friend_registration: set[str]
+    friend_registration: Set[str]
     preferred_languages: list[str]
     availability: Dict[str, bool]
     objective: int
@@ -50,7 +50,7 @@ class Group:
 def participant_to_group(participant:RawParticipant) -> Group:
 
     participants = [participant.id]
-    friend_registration = participant.friend_registration
+    friend_registration = set(participant.friend_registration)
     preferred_languages = participant.preferred_languages
     availability = participant.availability
     objective = objective_level(participant.objective)
