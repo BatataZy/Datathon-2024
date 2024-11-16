@@ -1,16 +1,13 @@
 from typing import Dict
 import json
 
-from dataclasses import dataclass
-
-@dataclass
 class Participant:
     
     id: str
 
     name: str
     email: str
-
+    shirt_size: str
     age: int
     year_of_study: str
     university: str
@@ -43,9 +40,5 @@ def collect_participants(path: str) -> list[Participant]:
         raise Exception(f"There was an error loading the participants. Are you using the correct path and file?")
 
     return participants
-
-    
-print(collect_participants("/home/max/Datathon/AEDChallenge/data/datathon_participants.json")[0])
-
 
 
