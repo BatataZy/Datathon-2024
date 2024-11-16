@@ -19,7 +19,7 @@ class RawParticipant:
     technical_project: str
 
     #Ordered list of main points
-    friend_registration: list[str]
+    friend_registration: set[str]
     preferred_languages: list[str]
     availability: Dict[str, bool]
     objective: str

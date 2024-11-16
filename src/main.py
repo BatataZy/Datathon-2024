@@ -1,15 +1,15 @@
 
 import yogi
 from collect import collect_participants
-from group import Group
+from group import Group, participant_to_group
 
 
 def main() -> None:
-    participants = collect_participants(yogi.read(str))
+    participants = collect_participants(yogi.read(str)) #/home/max/Datathon/Datathon-2024/data/datathon_participants.json
 
-    a = (Group(participants[0]))
+    print([participants[0].id, participants[1].id])
 
-    print(a)
+    print(participant_to_group(participants[3]).friend_registration + participant_to_group(participants[3]).friend_registration)
 
     # PRIMER MIREM ELS CASOS QUE S'HAN DE COMPLIR SÍ O SÍ
 
