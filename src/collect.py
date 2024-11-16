@@ -1,6 +1,9 @@
 from typing import Dict
 import json
+from dataclasses import dataclass
 
+
+@dataclass
 class RawParticipant:
     
     id: str
@@ -59,7 +62,6 @@ class Participant:
     interests: list[str]
     university: str
 
-
 def collect_participants(path: str) -> list[RawParticipant]:
 
     participants = []
@@ -73,4 +75,4 @@ def collect_participants(path: str) -> list[RawParticipant]:
 
     return participants
 
-
+print(collect_participants("/home/max/Datathon/Datathon-2024/data/datathon_participants.json"))
