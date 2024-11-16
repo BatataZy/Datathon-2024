@@ -38,12 +38,15 @@ def creació_perfil()->list[str]:
     return perfil
 
 def creació_lista()->list[str]:
-    L = ['español', 'catala', 'english']
+    L = [read(str), read(str)]
     return L
 
 def main()->None:
     L = creació_perfil()
-    L = [L, L]
+    M = creació_perfil()
+    N = creació_perfil()
+    B = creació_perfil()
+    L = [L, M, N, B] 
     print('lista de listas: ', L)
     lista_idiomas = assignacio_idiomes(L)
     print('recuento de hablantes: ', lista_idiomas)
