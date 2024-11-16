@@ -7,7 +7,7 @@ from dataclasses import dataclass
 @dataclass
 class Group:
 
-    ids: list[str]
+    ids: Set[str]
 
     #Ordered list of main points
     friend_registration: Set[str]
@@ -50,7 +50,7 @@ class Group:
             programming_skills.setdefault(i, max(self.programming_skills.get(i, 0), other.programming_skills.get(i, 0)))
                 
         return Group(
-            self.ids + other.ids,
+            self.ids | other.ids,
             self.friend_registration & other.friend_registration,
             self.preferred_languages & other.preferred_languages,
             self.availability | other.availability,
@@ -67,7 +67,7 @@ class Group:
 
 def participant_to_group(participant:RawParticipant) -> Group:
 
-    ids = [participant.id]
+    ids = set([participant.id])
     friend_registration = set(participant.friend_registration)
     preferred_languages = set(participant.preferred_languages)
     availability = set(i for i in list(participant.availability) if participant.availability.get(i) == True)
