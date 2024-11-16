@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 from collect import collect_participants
+from yogi import read
 
 def friends(a,b):
     if b.id in a.friends:
@@ -14,6 +15,6 @@ def bidirectional_friends(a,b)->bool:
 
 DATA_FILE = Path(os.path.dirname(__file__)).resolve().parent / "data" / "participants-prova.json"
 
-participants = collect_participants(DATA_FILE)
+participants = collect_participants(read(str)) # C:/Users/GABO.LOPEZ/Documents/GitHub/AEDChallenge/data/datathon_participants.json
 for participant in participants:
-    participant.friend_registration
+    print(participant.friend_registration)

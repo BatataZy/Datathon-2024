@@ -1,5 +1,5 @@
 import re
-from collect import collect_participants
+from collect import Participant, collect_participants
 import yogi
 
 def classify_goal(text: str) -> int:
@@ -43,20 +43,37 @@ def classify_goal(text: str) -> int:
             if re.search(pattern, text):
                 return True
         return False
-
+    
+    
     # Count matches for each category
+    score_1 = 0
+    for word in text:
+        print(word)
     score_1 = sum(not is_negated(text, word) and word in text for word in option_1_keywords)
+
     score_2 = sum(not is_negated(text, word) and word in text for word in option_2_keywords)
     score_3 = sum(not is_negated(text, word) and word in text for word in option_3_keywords)
 
     # Determine the option with the highest score
     scores = [score_1, score_2, score_3]
-    option = scores.index(max(scores)) + 1
+    print(scores)
+    option = scores.index(max(scores)) + 1 # Si hi ha dubte fiquem la menys comptetitiva
 
     return option
 
 
-
-participants = collect_participants(yogi.read(int)) # "/home/max/Datathon/AEDChallenge/data/datathon_participants.json"
-print(participants)
-
+# participants: list[Participant] = collect_participants(yogi.read(str)) 
+# # "C:/Users/GABO.LOPEZ/Documents/GitHub/AEDChallenge/data/datathon_participants.json"
+print(classify_goal("Hey, I'm Rosa! For this datathon, my objective is to come out with a learning mentality. I want to dive deeper into data analysis and try new tools to enhance my skills. I'd love to challenge myself to build complex projects and troubleshoot problems. I'm not particularly worried about winning or taking the top spot, but I do hope to get exposure to new data manipulation techniques and frameworks. By the end of this datathon, I'd like to feel confident in taking on more ambitious projects and having a fresh perspective to approach data science problems."))
+'''
+for participant in participants:
+    print(participant.objective)
+    print(classify_goal(participant.objective))
+'''
+# Hey, I'm Rosa! For this datathon, my objective is to come out with a learning mentality. 
+# I want to dive deeper into data analysis and try new tools to enhance my skills. 
+# I'd love to challenge myself to build complex projects and troubleshoot problems.
+#  I'm not particularly worried about winning or taking the top spot, but I do hope to get exposure to new data manipulation 
+# techniques and frameworks. By the end of this datathon, I'd like to feel confident in taking on more ambitious projects and 
+# having a fresh perspective to approach data science problems.
+[2, 3, 0] # What happens in the "not particularly worried about winning?""
