@@ -11,8 +11,8 @@ class Group:
 
     #Ordered list of main points
     friend_registration: Set[str]
-    preferred_languages: list[str]
-    availability: Dict[str, bool]
+    preferred_languages: Set[str]
+    availability: Set[str]
     objective: int
     remaining_team_size: int
     interest_in_challenges: Dict[str, int]
@@ -44,15 +44,17 @@ class Group:
     def __add__(self, other):
         return Group(
             self.participants + other.participans,
-            self.friend_registration - self.friend_registration
+            self.friend_registration & self.friend_registration,
+            self.preferred_languages & self.preferred_languages,
+            self.availability 
         )
 
 def participant_to_group(participant:RawParticipant) -> Group:
 
     participants = [participant.id]
     friend_registration = set(participant.friend_registration)
-    preferred_languages = participant.preferred_languages
-    availability = participant.availability
+    preferred_languages = set(participant.preferred_languages)
+    availability = (i for i in participant.availability)
     objective = objective_level(participant.objective)
     remaining_team_size = participant.preferred_team_size - 1
     interest_in_challenges = dict((i, 1) for i in participant.interest_in_challenges)
