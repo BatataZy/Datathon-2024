@@ -13,8 +13,3 @@ def bidirectional_friends(a,b)->bool:
         return True
     return False
 
-DATA_FILE = Path(os.path.dirname(__file__)).resolve().parent / "data" / "participants-prova.json"
-
-participants = collect_participants(read(str)) # C:/Users/GABO.LOPEZ/Documents/GitHub/AEDChallenge/data/datathon_participants.json
-for participant in participants:
-    print(participant.friend_registration)

@@ -3,18 +3,30 @@ from collect import collect_participants
 from group import Group, participant_to_group
 from friends import bidirectional_friends
 
-def main() -> None: # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/datathon_participants
+def main() -> None: # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/datathon_participants.json
     participants = collect_participants(yogi.read(str)) #/home/max/Datathon/Datathon-2024/data/datathon_participants.json
 
     grups: list[Group] = [participant_to_group(participant) for participant in participants]
-    for grup in grups: # Anem afegint persona a persona
+
+    for equip in grups: # Anem afegint persona a persona
         compatibilitat: list[float] = [0] * len(participants) # Farem puntuació per cada persona per veure la compatibilitat
         # Primer mirem si té amics en comú per poder-los combinar directament
-        if grup.friend_registration != set([]): # Si no està buit, fem els participants.
-            for x in grups:
-                if grup.friend_registration == :
+        if equip.friend_registration != set([]): # Si no està buit, fem els participants.
+            for amic in equip.friend_registration:
+                posicio = 0 # A revisar si podem utilitzar més cops.
+                for x in grups: # Recorres TOTS ELS PARTICIPANTS
+                    if amic in x.ids:
+                        # AFEGIM FENT "ADD" EL equip A LA LLISTA TOTS ELS AMICS AL equip
+                        for i in x.ids:
+                            if bidirectional_friends(amic, i):
+                                # AFEGIM FENT "ADD" EL equip A LA LLISTA TOTS ELS AMICS AL equip
+                                equip = equip + x 
+                                compatibilitat[posicio] = 0
 
-            # Fem el dels amics i l'afegim si encara no està
+
+
+                    posicio += 1
+      # Fem el dels amics i l'afegim si encara no està
 
         # Mirem que tinguin el mateix llenguatge
         
