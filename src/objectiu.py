@@ -36,7 +36,7 @@ def classify_goal(text: str) -> int:
     negations = ["not", "never", "no", "none", "without", "don't", ]
 
     # Helper function to check if a keyword is negated
-    def is_negated(text, keyword):
+    def is_negated(text: str, keyword: str) -> bool:
         negative_patterns = [rf"{neg}.*\b{keyword}\b" for neg in negations]
         for pattern in negative_patterns:
             if re.search(pattern, text):
