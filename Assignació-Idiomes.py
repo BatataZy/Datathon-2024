@@ -1,5 +1,18 @@
 from yogi import *
 
+def creació_perfil()->list[str]:
+    perfil:list[str] = []
+
+    id = read(str)
+    nom = read(str)
+    edat = read(str)
+    idiomes = creació_lista()
+
+    perfil = [id] + [nom] + [edat] + [idiomes]
+    print('perfil:', perfil)
+
+    return perfil
+
 def assignacio_idiomes(L: list)->list[str]:
     #pongo la L por si acabamos usando una lista con los prefiles de la gente (lista de listas)
 
@@ -23,27 +36,16 @@ def assignacio_idiomes(L: list)->list[str]:
                     #añadir el id de la persona que habla es idioma j
     return language_speakers
 
-    
-def creació_perfil()->list[str]:
-    perfil:list[str] = []
-
-    id = read(str)
-    nom = read(str)
-    edat = read(str)
-    idiomes = creació_lista()
-
-    perfil = [id] + [nom] + [edat] + [idiomes]
-    print('perfil:', perfil)
-
-    return perfil
-
 def creació_lista()->list[str]:
-    L = ['español', 'catala', 'english']
+    L = [read(str), read(str)]
     return L
 
 def main()->None:
     L = creació_perfil()
-    L = [L, L]
+    M = creació_perfil()
+    N = creació_perfil()
+    B = creació_perfil()
+    L = [L, M, N, B] 
     print('lista de listas: ', L)
     lista_idiomas = assignacio_idiomes(L)
     print('recuento de hablantes: ', lista_idiomas)

@@ -1,7 +1,6 @@
-from typing import Dict
+from typing import Dict, Set
 import json
 from dataclasses import dataclass
-
 
 @dataclass
 class RawParticipant:
@@ -37,30 +36,6 @@ class RawParticipant:
     #Useless
     shirt_size: str
     dietary_restrictions: str
-
-class Participant:
-    
-    id: str
-
-    #User presentation
-    name: str
-    age: int
-    email: str
-
-    #Ordered list of main points
-    friend_registration: list[str]
-    preferred_languages: list[str]
-    availability: Dict[str, bool]
-    objective: int
-    preferred_team_size: int
-    interest_in_challenges: list[str]
-    preferred_role: str
-    experience_level: str
-    year_of_study: str
-    programming_skills: Dict[str, int]
-    hackathons_done: int
-    interests: list[str]
-    university: str
 
 def collect_participants(path: str) -> list[RawParticipant]:
 
