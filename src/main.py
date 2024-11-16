@@ -7,10 +7,15 @@ def main() -> None: # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/da
     participants = collect_participants(yogi.read(str)) #/home/max/Datathon/Datathon-2024/data/datathon_participants.json
 
     grups: list[Group] = [participant_to_group(participant) for participant in participants]
-
     for equip in grups: # Anem afegint persona a persona
         compatibilitat: list[float] = [0] * len(participants) # Farem puntuació per cada persona per veure la compatibilitat
         # Primer mirem si té amics en comú per poder-los combinar directament
+        for altres_equips in grups:
+            if equip != altres_equips:
+                
+        
+        
+        '''
         if equip.friend_registration != set([]): # Si no està buit, fem els participants.
             for amic in equip.friend_registration:
                 posicio = 0 # A revisar si podem utilitzar més cops.
@@ -18,14 +23,15 @@ def main() -> None: # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/da
                     if amic in x.ids:
                         # AFEGIM FENT "ADD" EL equip A LA LLISTA TOTS ELS AMICS AL equip
                         for i in x.ids:
-                            if bidirectional_friends(amic, i):
+                            if amic == i:
                                 # AFEGIM FENT "ADD" EL equip A LA LLISTA TOTS ELS AMICS AL equip
                                 equip = equip + x 
                                 compatibilitat[posicio] = 0
-
+        
 
 
                     posicio += 1
+        '''
       # Fem el dels amics i l'afegim si encara no està
 
         # Mirem que tinguin el mateix llenguatge
