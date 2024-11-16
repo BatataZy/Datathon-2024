@@ -1,9 +1,6 @@
 from typing import Dict
 import json
 
-from dataclasses import dataclass
-
-@dataclass
 class Participant:
     
     id: str
