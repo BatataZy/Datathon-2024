@@ -1,22 +1,8 @@
 import re
-from collect import Participant, RawParticipant, collect_participants
 import yogi
-
-def classify_goal(text: str) -> int:
-    """
-    Classifies the text based on the participant's goal in the competition,
-    taking negations into account and using an expanded keyword set.
-
-    Args:
-        text (str): The participant's response text.
-
-    Returns:
-        int: A number between 1 and 3 indicating seriousness about winning 
-             (1 = very serious, 2 = mixed goals, 3 = focus on fun and experience).
-    """
-    text = text.lower()  # Normalize the text to lowercase
-
-    # Expanded keywords for each classification
+from collect import RawParticipant, collect_participants
+def objective_level(text:str):
+    # Paraules clau per a cada opció
     option_1_keywords = [
         "win", "compete", "challenge", "top", "victory", "success", 
         "competitive", "push myself", "outdo", "glory", "focus", "intensely", 
@@ -32,39 +18,51 @@ def classify_goal(text: str) -> int:
         "experience", "blast", "soak up", "community", "relax", "networking", 
         "new people", "workshop", "meetup", "food", "participate in activities"
     ]
+    # Paraules de negació
+    negations = ["not", "never", "no", "none", "without", "don't"]
 
-    # Negation words
-    negations = ["not", "never", "no", "none", "without", "don't", ]
+    # Funció auxiliar per detectar si hi ha negació abans d'una paraula clau
+    def has_negation(text: str, keyword: str) -> bool:
+        pattern = r"(\b(?:{})\b)\s+\b{}\b".format("|".join(negations), re.escape(keyword))
+        return bool(re.search(pattern, text, re.IGNORECASE))
 
-    # Helper function to check if a keyword is negated
-    def is_negated(text: str, keyword: str) -> bool:
-        negative_patterns = [rf"{neg}.*\b{keyword}\b" for neg in negations]
-        for pattern in negative_patterns:
-            if re.search(pattern, text):
-                return True
-        return False
-    
-    
-    # Count matches for each category
-    score_1 = 0
-    for word in text:
-        print(word)
-    score_1 = sum(not is_negated(text, word) and word in text for word in option_1_keywords)
+    # Inicialitzar comptadors
+    score_1, score_2, score_3 = 0, 0, 0
 
-    score_2 = sum(not is_negated(text, word) and word in text for word in option_2_keywords)
-    score_3 = sum(not is_negated(text, word) and word in text for word in option_3_keywords)
+    # Convertir el text a minúscules per a facilitar la comparació
+    text = text.lower()
 
-    # Determine the option with the highest score
-    scores = [score_1, score_2, score_3]
-    print(scores)
-    option = scores.index(max(scores)) + 1 # Si hi ha dubte fiquem la menys comptetitiva
+    # Comprovar paraules clau i comptar puntuacions
+    for word in option_1_keywords:
+        if word in text and not has_negation(text, word):
+            score_1 += 1
+    for word in option_2_keywords:
+        if word in text and not has_negation(text, word):
+            score_2 += 1
+    for word in option_3_keywords:
+        if word in text and not has_negation(text, word):
+            score_3 += 1
 
-    return option
+    # Determinar el cas segons el màxim score
+    if score_1 > score_2 and score_1 > score_3:
+        return 1
+    elif score_2 > score_1 and score_2 > score_3:
+        return 2
+    else:
+        return 3
 
+#participants: list[RawParticipant] = collect_participants(yogi.read(str)) # "C:/Users/GABO.LOPEZ/Documents/GitHub/AEDChallenge/data/datathon_participants.json"
 
+<<<<<<< HEAD
 # participants: list[Participant] = collect_participants(yogi.read(str)) 
 participants: list[RawParticipant] = collect_participants(yogi.read(str)) # "C:/Users/GABO.LOPEZ/Documents/GitHub/AEDChallenge/data/datathon_participants.json"
 
 for participant in participants:
     print(participant.objective)
     print(classify_goal(participant.objective))
+=======
+#for participant in participants:
+#    print(participant.objective)
+#    print(determine_objective_level(participant.objective))
+#print(determine_objective_level("Hey, I'm Rosa! For this datathon, my objective is to come out with a learning mentality. I want to dive deeper into data analysis and try new tools to enhance my skills. I'd love to challenge myself to build complex projects and troubleshoot problems. I'm not particularly worried about winning or taking the top spot, but I do hope to get exposure to new data manipulation techniques and frameworks. By the end of this datathon, I'd like to feel confident in taking on more ambitious projects and having a fresh perspective to approach data science problems."))
+>>>>>>> 869d93b8fe628a788ec95616ad223076e61e1d43
