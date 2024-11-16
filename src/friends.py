@@ -9,3 +9,4 @@ def bidirectional_friends(a,b)->bool:
     if friends(a,b) and friends(b,a):
         return True
     return False
+
