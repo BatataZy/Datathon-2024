@@ -1,7 +1,7 @@
 import re
 import yogi
 from collect import RawParticipant, collect_participants
-def determine_objective_level(text):
+def objective_level(text:str):
     # Paraules clau per a cada opció
     option_1_keywords = [
         "win", "compete", "challenge", "top", "victory", "success", 
@@ -45,15 +45,15 @@ def determine_objective_level(text):
 
     # Determinar el cas segons el màxim score
     if score_1 > score_2 and score_1 > score_3:
-        return 0
-    elif score_2 > score_1 and score_2 > score_3:
         return 1
-    else:
+    elif score_2 > score_1 and score_2 > score_3:
         return 2
+    else:
+        return 3
 
-participants: list[RawParticipant] = collect_participants(yogi.read(str)) # "C:/Users/GABO.LOPEZ/Documents/GitHub/AEDChallenge/data/datathon_participants.json"
+#participants: list[RawParticipant] = collect_participants(yogi.read(str)) # "C:/Users/GABO.LOPEZ/Documents/GitHub/AEDChallenge/data/datathon_participants.json"
 
-for participant in participants:
-    print(participant.objective)
-    print(determine_objective_level(participant.objective))
-print(determine_objective_level("Hey, I'm Rosa! For this datathon, my objective is to come out with a learning mentality. I want to dive deeper into data analysis and try new tools to enhance my skills. I'd love to challenge myself to build complex projects and troubleshoot problems. I'm not particularly worried about winning or taking the top spot, but I do hope to get exposure to new data manipulation techniques and frameworks. By the end of this datathon, I'd like to feel confident in taking on more ambitious projects and having a fresh perspective to approach data science problems."))
+#for participant in participants:
+#    print(participant.objective)
+#    print(determine_objective_level(participant.objective))
+#print(determine_objective_level("Hey, I'm Rosa! For this datathon, my objective is to come out with a learning mentality. I want to dive deeper into data analysis and try new tools to enhance my skills. I'd love to challenge myself to build complex projects and troubleshoot problems. I'm not particularly worried about winning or taking the top spot, but I do hope to get exposure to new data manipulation techniques and frameworks. By the end of this datathon, I'd like to feel confident in taking on more ambitious projects and having a fresh perspective to approach data science problems."))
