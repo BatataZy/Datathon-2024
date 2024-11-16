@@ -1,6 +1,8 @@
 from typing import Dict, Set
 
-from collect import RawParticipant
+from click import group
+
+from collect import RawParticipant, collect_participants
 from objectiu import objective_level
 from dataclasses import dataclass
 
@@ -14,18 +16,17 @@ class Group:
     preferred_languages: Set[str]
     availability: Set[str]
     objective: int
-    remaining_team_size: int
+    preferred_team_size: int
     interest_in_challenges: Dict[str, int]
-    roles: list[str]
+    roles: Set[str]
     experience_level: float
     year_of_study: float
     programming_skills: Dict[str, int]
     hackathons_done: float
-    interests: list[str]
-    university: Dict[str, int]
+    interests: Set[str]
 
     #Group generator function from participant data
-    def __init__(self, ids, friend_registration, preferred_languages, availability, objective, preferred_team_size, interest_in_challenges, roles, experience_level, year_of_study, programming_skills, hackathons_done, interests, university):
+    def __init__(self, ids, friend_registration, preferred_languages, availability, objective, preferred_team_size, interest_in_challenges, roles, experience_level, year_of_study, programming_skills, hackathons_done, interests):
         self.ids = ids
         self.friend_registration = friend_registration
         self.preferred_languages = preferred_languages
@@ -39,18 +40,31 @@ class Group:
         self.programming_skills = programming_skills
         self.hackathons_done = hackathons_done
         self.interests = interests
-        self.university = university
 
     def __add__(self, other):
+
+        interest_in_challenges = dict([])
+        for i in (set(list(self.interest_in_challenges)) | set(list(other.interest_in_challenges))):
+            interest_in_challenges.setdefault(i, self.interest_in_challenges.get(i, 0) + other.interest_in_challenges.get(i, 0))
+
+        programming_skills = dict([])
+        for i in (set(list(self.programming_skills)) | set(list(self.programming_skills))):
+            programming_skills.setdefault(i, max(self.programming_skills.get(i, 0), other.programming_skills.get(i, 0)))
+                
         return Group(
             self.ids + other.ids,
             self.friend_registration & other.friend_registration,
             self.preferred_languages & other.preferred_languages,
             self.availability | other.availability,
-            (self.objective*len(self.participants) + other.objective*len(other.participant))/(len(self.participants) + len(other.participans)),
-            (self.preferred_team_size*len(self.participants) + self.preferred_team_size*len(other.participant))/(len(self.participants) + len(other.participans)),
-            self.interest_in_challenges + other.interest_in_challenges,
-            
+            (self.objective*len(self.ids) + other.objective*len(other.ids))/(len(self.ids) + len(other.ids)),
+            (self.preferred_team_size*len(self.ids) + other.preferred_team_size*len(other.ids))/(len(self.ids) + len(other.ids)),
+            interest_in_challenges,
+            self.roles | other.roles,
+            (self.experience_level*len(self.ids) + other.experience_level*len(other.ids))/(len(self.ids) + len(other.ids)),
+            (self.year_of_study*len(self.ids) + other.year_of_study*len(other.ids))/(len(self.ids) + len(other.ids)),
+            programming_skills,
+            (self.hackathons_done*len(self.ids) + other.hackathons_done*len(other.ids))/(len(self.ids) + len(other.ids)),
+            self.interests | other.interests,
         )
 
 def participant_to_group(participant:RawParticipant) -> Group:
@@ -62,7 +76,7 @@ def participant_to_group(participant:RawParticipant) -> Group:
     objective = objective_level(participant.objective)
     preferred_team_size = participant.preferred_team_size
     interest_in_challenges = dict((i, 1) for i in participant.interest_in_challenges)
-    roles = [participant.preferred_role]
+    roles = set([participant.preferred_role])
     
     match participant.experience_level:
         case "Beginner": experience_level = 1.
@@ -79,7 +93,10 @@ def participant_to_group(participant:RawParticipant) -> Group:
     
     programming_skills = participant.programming_skills
     hackathons_done = float(participant.hackathons_done)
-    interests = participant.interests
-    university = dict([(participant.university, 1)])
+    interests = set(participant.interests)
 
-    return Group(ids, friend_registration, preferred_languages, availability, objective, preferred_team_size, interest_in_challenges, roles, experience_level, year_of_study, programming_skills, hackathons_done, interests, university)
+    return Group(ids, friend_registration, preferred_languages, availability, objective, preferred_team_size, interest_in_challenges, roles, experience_level, year_of_study, programming_skills, hackathons_done, interests)
+
+groups = [participant_to_group(participant) for participant in collect_participants("/home/max/Datathon/Datathon-2024/data/datathon_participants.json")]
+
+print(groups[0], groups[1], groups[0] + groups[1], sep="\n \n")
