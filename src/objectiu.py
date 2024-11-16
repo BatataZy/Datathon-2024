@@ -53,16 +53,7 @@ def objective_level(text:str):
 
 #participants: list[RawParticipant] = collect_participants(yogi.read(str)) # "C:/Users/GABO.LOPEZ/Documents/GitHub/AEDChallenge/data/datathon_participants.json"
 
-<<<<<<< HEAD
-# participants: list[Participant] = collect_participants(yogi.read(str)) 
-participants: list[RawParticipant] = collect_participants(yogi.read(str)) # "C:/Users/GABO.LOPEZ/Documents/GitHub/AEDChallenge/data/datathon_participants.json"
-
-for participant in participants:
-    print(participant.objective)
-    print(classify_goal(participant.objective))
-=======
 #for participant in participants:
 #    print(participant.objective)
 #    print(determine_objective_level(participant.objective))
 #print(determine_objective_level("Hey, I'm Rosa! For this datathon, my objective is to come out with a learning mentality. I want to dive deeper into data analysis and try new tools to enhance my skills. I'd love to challenge myself to build complex projects and troubleshoot problems. I'm not particularly worried about winning or taking the top spot, but I do hope to get exposure to new data manipulation techniques and frameworks. By the end of this datathon, I'd like to feel confident in taking on more ambitious projects and having a fresh perspective to approach data science problems."))
->>>>>>> 869d93b8fe628a788ec95616ad223076e61e1d43
