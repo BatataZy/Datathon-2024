@@ -45,11 +45,11 @@ def objective_level(text:str):
 
     # Determinar el cas segons el màxim score
     if score_1 > score_2 and score_1 > score_3:
-        return 1
+        return 3
     elif score_2 > score_1 and score_2 > score_3:
         return 2
     else:
-        return 3
+        return 1
 
 #participants: list[RawParticipant] = collect_participants(yogi.read(str)) # "C:/Users/GABO.LOPEZ/Documents/GitHub/AEDChallenge/data/datathon_participants.json"
 
