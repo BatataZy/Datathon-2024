@@ -25,7 +25,7 @@ def algorithm(grups: list[Group]) -> list[Group]:
             popu = 0
 
             it += 1
-            if i != j and grups[j].preferred_team_size > len(grups[j].ids):
+            if i != j and grups[j].preferred_team_size > len(grups[j].ids) and 4 >= (grups[i].preferred_team_size*len(grups[i].ids) + grups[j].preferred_team_size*len(grups[j].ids))/(len(grups[i].ids) + len(grups[j].ids)) >= (len(grups[i].ids | grups[j].ids)):
 
                 seriousness = (grups[i].objective*len(grups[i].ids) + grups[j].objective*len(grups[j].ids))/(len(grups[i].ids)+len(grups[j].ids))
 
@@ -70,8 +70,19 @@ def algorithm(grups: list[Group]) -> list[Group]:
 
 def main() -> None: # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/datathon_participants.json
     participants = collect_participants(yogi.read(str)) #/home/max/Datathon/Datathon-2024/data/datathon_participants.json
-
     grups: list[Group] = [participant_to_group(participant) for participant in participants]
+
+    old_length = 0
+    length = len(grups)
+    while old_length != length:
+
+        grups = algorithm(grups)
+        old_length, length = length, len(grups)
+
+        
+    for i in grups:
+        print(i.ids)
+    
 
 
 if __name__ == "__main__":

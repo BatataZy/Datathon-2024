@@ -15,7 +15,7 @@ class Group:
     preferred_languages: Set[str]
     availability: Set[str]
     objective: int
-    preferred_team_size: int
+    preferred_team_size: float
     interest_in_challenges: Dict[str, int]
     roles: Set[str]
     experience_level: float
@@ -72,7 +72,7 @@ def participant_to_group(participant:RawParticipant) -> Group:
     preferred_languages = set(participant.preferred_languages)
     availability = set(i for i in list(participant.availability) if participant.availability.get(i) == True)
     objective = objective_level(participant.objective)
-    preferred_team_size = participant.preferred_team_size
+    preferred_team_size = float(participant.preferred_team_size)
     interest_in_challenges = dict((i, 1) for i in participant.interest_in_challenges)
     roles = set([participant.preferred_role])
     
