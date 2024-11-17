@@ -1,11 +1,9 @@
 from typing import Dict
-from matplotlib.style import available
-from numpy import sort
 import yogi
 from collect import collect_participants
 from group import Group, participant_to_group
 from friends import bidirectional_friends
-import group
+from objectiu import objective_level
 
 def algorithm(grups: list[Group]) -> list[Group]:
 
@@ -69,18 +67,32 @@ def algorithm(grups: list[Group]) -> list[Group]:
 
 
 def main() -> None: # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/datathon_participants.json
+    
+    print("Please type the path of the participants json file:")
+    
     participants = collect_participants(yogi.read(str)) #/home/max/Datathon/Datathon-2024/data/datathon_participants.json
     grups: list[Group] = [participant_to_group(participant) for participant in participants]
 
+    print("\nCalculating groups... (this may take a while)")
+
+    it = 0
     old_length = 0
     length = len(grups)
     while old_length != length:
 
+        it+=1
+
         grups = algorithm(grups)
         old_length, length = length, len(grups)
-        
+    
+    print(f"\nDone! (in {it} iterations)")
+
+
     for i in grups:
-        print(i.ids)
+        for j in (i.ids):
+            for k in participants:
+                if k.id == j: print(k.preferred_team_size, end=" ")
+        print("\n")
 
 if __name__ == "__main__":
     main()
