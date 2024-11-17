@@ -31,7 +31,7 @@ def algorithm(grups: list[Group]) -> list[Group]:
                 if grups[i].preferred_languages & grups[j].preferred_languages != set([]): popu += 499
                 popu += 17 * len(grups[i].availability & grups[j].availability)**2
                 popu += 127 * (-(abs( grups[i].objective - grups[j].objective ))**2 + 4)
-                popu += 19 * (-( grups[i].preferred_team_size - grups[j].preferred_team_size )**2 + 4)
+                popu += 19 * (-( grups[i].preferred_team_size - grups[j].preferred_team_size )**3 + 8)
 
                 popu += seriousness**2 * ( -( (grups[i].experience_level + grups[i].year_of_study) - (grups[j].experience_level + grups[j].year_of_study) )**2 + 49)
                 popu += 0.5 * seriousness**2 * ( -abs(grups[i].programming_skills - grups[j].programming_skills)**2 + 100 )
