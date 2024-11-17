@@ -1,202 +1,174 @@
 import streamlit as st
-import json
 from pathlib import Path
+import json
+from collect import collect_participants
+from group import participant_to_group
+from main import algorithm, main
+import os
 
 # Ruta al archivo JSON con los participantes
-DATA_FILE = Path("/home/raxo/Documents/GitHub/Datathon-2024/data/datathon_participants.json")
+dirname = os.path.dirname(__file__)
+DATA_FILE = os.path.join(dirname, '../data/datathon_participants.json')
 
-# Función para cargar participantes
-def load_participants():
-    if DATA_FILE.exists():
-        with open(DATA_FILE, "r") as f:
-            return json.load(f)
-    return []
+# Cargar participantes
+def load_participants(path: Path):
+    try:
+        participants = collect_participants(str(path))
+        return participants
+    except Exception as e:
+        st.error(f"Error loading participants: {e}")
+        return []
 
-# Función para asignar equipos
-def assign_teams(participants, teams):
-    # Limpiar equipos previos
-    for participant in participants:
-        participant["team"] = None
+# Asignar equipos a los participantes y guardar el número de equipo, los miembros del equipo y la compatibilidad
+def assign_teams(participants, teams, compatibility):
+    team_info = {}  # Diccionario para almacenar el número de equipo, los miembros y la compatibilidad
 
-    # Asignar nuevos equipos
-    for team in teams:
-        for participant_id in team:
-            participant = next((p for p in participants if p["id"] == participant_id), None)
+    # Asignamos el equipo correcto a cada participante
+    for team_idx, team in enumerate(teams):
+        for participant_id in team.ids:
+            participant = next((p for p in participants if p.id == participant_id), None)
             if participant:
-                # Añadir nombres de los compañeros al atributo "team"
-                participant["team"] = [
-                    p["name"] for p in participants if p["id"] in team and p["id"] != participant_id
-                ]
+                # Guardamos el número del equipo, los miembros y la compatibilidad
+                team_info[participant.id] = {
+                    "team_number": team_idx + 1,  # El número de equipo (empieza desde 1)
+                    "team_members": [
+                        next((p.name for p in participants if p.id == teammate_id), "Unknown")
+                        for teammate_id in team.ids
+                        if teammate_id != participant_id
+                    ],
+                    "compatibility": compatibility[team_idx]  # Asociar la compatibilidad con el equipo
+                }
 
-# Cargar datos
-participants = load_participants()
-
-# Estilo personalizado
-st.markdown(
-    """
-    <style>
-    header { 
-        background-color: transparent; 
-        color: white; 
-        text-align: center; 
-        font-size: 30px; 
-        font-weight: bold;
-        padding: 10px 0;
-    }
-    .search-box input {
-        border: 1px solid #800000;
-        padding: 5px;
-        border-radius: 5px;
-        width: 100%;
-    }
-    .line-divider {
-        border-top: 1px solid #800000;
-        margin: 20px 0;
-        width: 80%;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    .load-more-button, .show-less-button {
-        background: none;
-        border: 1px solid #800000;
-        color: #800000;
-        padding: 5px 15px;
-        border-radius: 5px;
-        font-size: 14px;
-        margin-right: 5px;
-    }
-    .load-more-button:hover, .show-less-button:hover {
-        background-color: #800000;
-        color: white;
-    }
-    .participant-count {
-        font-size: 12px;
-        color: #555555;
-        margin-bottom: 10px;
-    }
-    .create-teams-button {
-        background-color: #800000;
-        color: white;
-        padding: 10px 30px;
-        border-radius: 5px;
-        font-size: 16px;
-        font-weight: bold;
-        margin-top: 30px;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        width: 100%;
-    }
-    .create-teams-button:hover {
-        background-color: #660000;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# Header
-st.markdown("<header>Datathon FME Team Maker</header>", unsafe_allow_html=True)
+    return team_info  # Devolvemos la información de los equipos
 
 # Inicializar estado
 if "page" not in st.session_state:
     st.session_state["page"] = "home"
-    st.session_state["show_more_count"] = 9  # Mostrar 3 líneas (9 participantes) por defecto
-    st.session_state["last_update"] = None  # Evitar múltiples actualizaciones rápidas
-    st.session_state["teams"] = []  # Equipos creados
+    st.session_state["teams"] = []
+    st.session_state["selected_participant"] = None  # Para almacenar el participante seleccionado
+    st.session_state["team_info"] = {}  # Almacenamos la información de los equipos
+    st.session_state["compatibility"] = []  # Almacenamos la compatibilidad de los equipos
 
-# Manejo de eventos
-def set_page(page_name, participant=None):
-    st.session_state["page"] = page_name
-    if participant:
-        st.session_state["selected_participant"] = participant
+# Cargar los participantes desde el archivo JSON
+participants = load_participants(DATA_FILE)
 
-# Asignar equipos si ya existen
-if st.session_state["teams"]:
-    assign_teams(participants, st.session_state["teams"])
-
-# Búsqueda
-if st.session_state["page"] == "home":
-    # Mostrar el número total de participantes en el placeholder
-    total_participants = len(participants)
-    search_query = st.text_input(
-        f"Search participant ({total_participants} in total)", 
-        placeholder="Search participants...", 
-        key="search_query"
-    )
-    
-    # Mostrar solo la línea de separación si hay contenido
-    if search_query or st.session_state["teams"]:
-        st.markdown('<div class="line-divider"></div>', unsafe_allow_html=True)
-
-    # Mostrar número de participantes encontrados solo si hay búsqueda
-    if search_query:
-        # Filtrar participantes
-        filtered_participants = [
-            p for p in participants if search_query.lower() in p["name"].lower()
-        ]
-
-        # Mostrar número de participantes encontrados
-        st.markdown(f'<div class="participant-count">{len(filtered_participants)} participants found</div>', unsafe_allow_html=True)
-
-        # Mostrar participantes solo si hay resultados
-        if filtered_participants:
-            # Grid de tarjetas
-            columns = st.columns(3)
-            for idx, participant in enumerate(filtered_participants):
-                col = columns[idx % 3]
-                with col:
-                    if st.button(
-                        f"{participant['name']} ({participant['year_of_study']})",
-                        key=f"participant_{participant['id']}",
-                        on_click=set_page,
-                        args=("details", participant),
-                    ):
-                        pass  # El manejo ocurre con la función `set_page`
-
-            # Botón para crear equipos
-            st.markdown('<div class="line-divider"></div>', unsafe_allow_html=True)
-            if st.button("Create Teams", key="create_teams", use_container_width=True):
-                # Ejemplo: Crear equipos con IDs
-                st.session_state["teams"] = [
-                    ["1", "2", "3"],  # Ejemplo de equipos (IDs de participantes)
-                    ["4", "5", "6"],
-                ]
-                assign_teams(participants, st.session_state["teams"])
-                st.experimental_rerun()
-
-    else:
-        # Si no hay búsqueda, solo mostrar la línea de separación y el botón "Create Teams"
-        st.markdown('<div class="line-divider"></div>', unsafe_allow_html=True)
-        if st.button("Create Teams", key="create_teams", use_container_width=True):
-            # Ejemplo: Crear equipos con IDs
-            st.session_state["teams"] = [
-                ["1", "2", "3"],  # Ejemplo de equipos (IDs de participantes)
-                ["4", "5", "6"],
-            ]
-            assign_teams(participants, st.session_state["teams"])
-            st.experimental_rerun()
-
-# Página de detalles
-elif st.session_state["page"] == "details":
-    participant = st.session_state["selected_participant"]
-    st.markdown(f"<header>{participant['name']}</header>", unsafe_allow_html=True)
+# Página principal
+def main_page():
+    # Header en negrita y tamaño aumentado
+    st.markdown("<h1 style='font-size: 36px; font-weight: bold;'>Datathon FME Team Maker</h1>", unsafe_allow_html=True)
     st.markdown('<div class="line-divider"></div>', unsafe_allow_html=True)
 
-    # Mostrar detalles
-    st.markdown(f"### {participant['name']}")
-    st.markdown(f"**{participant['year_of_study']} student at {participant['university']}**")
-    st.markdown(f"- **Age**: {participant['age']}")
-    st.markdown(f"- **Programming Skills**: {', '.join([f'{k} (Level {v})' for k, v in participant['programming_skills'].items()])}")
-    st.markdown(f"- **Objective**: {participant['objective']}")
-    st.markdown(f"- **Preferred Role**: {participant['preferred_role']}")
+    # Colocar las dos barras de búsqueda (de participantes y equipos) una al lado de la otra
+    col1, col2 = st.columns([2, 1])
 
-    # Atributo del equipo
-    if participant.get("team"):
-        st.markdown(f"- **Team**: {', '.join(participant['team'])}")
+    # Barra de búsqueda de participantes
+    with col1:
+        search_query = st.text_input("Search Participant", "")
+
+    # Barra de búsqueda de equipos
+    with col2:
+        team_search_query = st.text_input("Search Team Number", "")
+
+    # Filtrar los participantes según la búsqueda
+    filtered_participants = [
+        p for p in participants if search_query.lower() in p.name.lower()
+    ]
+    
+    # Mostrar el número de participantes en paréntesis, con un tamaño de fuente más pequeño
+    st.markdown(f"<h5 style='font-size: 14px;'>Search Participants ({len(filtered_participants)})</h5>", unsafe_allow_html=True)
+
+    # Si hay algo en la barra de búsqueda de participantes
+    if search_query:
+        if filtered_participants:
+            st.markdown("### Participants")
+            for participant in filtered_participants:
+                if st.button(participant.name, key=participant.id):
+                    st.session_state["selected_participant"] = participant
+                    st.session_state["page"] = "details"
+        else:
+            st.markdown("No participants found.")
+
+    # Filtrar y mostrar el equipo si se ingresa un número de equipo
+    if team_search_query.isdigit():
+        team_number = int(team_search_query)
+        teams = st.session_state["teams"]
+        team_found = False
+
+        for idx, team in enumerate(teams):
+            if idx + 1 == team_number:
+                team_found = True
+                team_members = [
+                    next((p.name for p in participants if p.id == member_id), "Unknown")
+                    for member_id in team.ids
+                ]
+                st.markdown(f"### Team {team_number}")
+                st.markdown(f"**Team Members**: {', '.join(team_members)}")
+                break
+
+        if not team_found:
+            st.markdown("Team not found.")
+
+    # Línea horizontal para separar la búsqueda de la creación de equipos
+    st.markdown('<hr>', unsafe_allow_html=True)
+
+    # Botón para crear equipos
+    if st.button("Create Teams"):
+        with st.spinner('Creating Teams, this might take a while...'):
+            try:
+                # Convertir participantes a grupos
+                g, c, mi, me = main()
+                groups = [participant_to_group(participant) for participant in participants]
+                # Ejecutar el algoritmo
+                st.session_state["teams"] = g
+                st.session_state["compatibility"] = c  # Guardamos la compatibilidad
+                # Asignar equipos y obtener la información de los equipos
+                st.session_state["team_info"] = assign_teams(participants, st.session_state["teams"], st.session_state["compatibility"])
+                st.success(f"Teams created successfully! Average Compatibility: {int(mi*100)}%, Median: {int(me*100)}%")
+            except Exception as e:
+                st.error(f"Error creating teams: {e}")
+
+    # Mostrar equipos si existen
+    if st.session_state["teams"]:
+        st.markdown('<div class="line-divider"></div>', unsafe_allow_html=True)
+        st.markdown("### Teams")
+        for idx, team in enumerate(st.session_state["teams"]):
+            team_members = [
+                next((p.name for p in participants if p.id == member_id), "Unknown")
+                for member_id in team.ids
+            ]
+            team_compatibility = st.session_state["compatibility"][idx]
+            st.write(f"**Team {idx + 1}:** {', '.join(team_members)} | **Compatibility**: {int(team_compatibility*100)}%")
+
+# Página de detalles del participante
+def details_page():
+    participant = st.session_state.get("selected_participant")
+    if not participant:
+        st.error("No participant selected.")
+        return
+
+    # Mostrar detalles del participante
+    st.markdown(f"### {participant.name}")
+    st.markdown(f"**{participant.year_of_study} student at {participant.university}**")
+    st.markdown(f"- **Age**: {participant.age}")
+    st.markdown(f"- **Programming Skills**: {', '.join([f'{k} (Level {v})' for k, v in participant.programming_skills.items()])}")
+    st.markdown(f"- **Objective**: {participant.objective}")
+    st.markdown(f"- **Preferred Role**: {participant.preferred_role}")
+
+    # Obtener la información del equipo desde el diccionario de 'team_info'
+    team_data = st.session_state["team_info"].get(participant.id)
+    if team_data:
+        st.markdown(f"- **Team Members**: {', '.join(team_data['team_members'])}")
+        st.markdown(f"- **Team Number**: {team_data['team_number']}")  # Mostrar el número del equipo
+        st.markdown(f"- **Team Compatibility**: {int(team_data['compatibility']*100)}%")  # Mostrar la compatibilidad del equipo
     else:
         st.markdown("- **Team**: None")
 
     # Botón para volver
-    if st.button("Back to Participants", key="back_to_participants", on_click=set_page, args=("home",)):
-        pass
+    if st.button("Back to Participants"):
+        st.session_state["page"] = "home"
+
+# Navegación entre páginas
+if st.session_state["page"] == "home":
+    main_page()
+elif st.session_state["page"] == "details":
+    details_page()

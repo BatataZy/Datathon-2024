@@ -5,6 +5,7 @@ from collect import RawParticipant, collect_participants
 from group import Group, participant_to_group
 from friends import bidirectional_friends
 import group
+import os
 from objectiu import objective_level
 
 def algorithm(grups: list[Group]) -> list[Group]:
@@ -90,11 +91,14 @@ def compatibility(group: Group, participants: list[RawParticipant]) -> Dict[str,
 
     return compatibility
 
-def main() -> None: # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/datathon_participants.json
+def main(): # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/datathon_participants.json
 
     print("Please type the path of the participants json file:")
 
-    participants = collect_participants(yogi.read(str)) #/home/max/Datathon/Datathon-2024/data/datathon_participants.json
+    dirname = os.path.dirname(__file__)
+    filename = os.path.join(dirname, '../data/datathon_participants.json')
+
+    participants = collect_participants(filename) #/home/max/Datathon/Datathon-2024/data/datathon_participants.json
     grups: list[Group] = [participant_to_group(participant) for participant in participants]
 
     print("\nCalculating groups... (this may take a while)")
@@ -118,6 +122,8 @@ def main() -> None: # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/da
 
     mediana = (comp_copy[int(len(comp_copy)/2)])
     mitjana = (sum(comp_copy)/len(comp_copy))
+
+    return (grups, compatibilities, mitjana, mediana)
 
 if __name__ == "__main__":
     main()
