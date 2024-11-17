@@ -78,12 +78,9 @@ def main() -> None: # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/da
 
         grups = algorithm(grups)
         old_length, length = length, len(grups)
-
         
     for i in grups:
         print(i.ids)
-    
-
 
 if __name__ == "__main__":
     main()
