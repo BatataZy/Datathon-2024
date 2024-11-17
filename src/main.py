@@ -1,6 +1,7 @@
+from linecache import updatecache
 from typing import Dict
 import yogi
-from collect import collect_participants
+from collect import RawParticipant, collect_participants
 from group import Group, participant_to_group
 from friends import bidirectional_friends
 from objectiu import objective_level
@@ -36,7 +37,7 @@ def algorithm(grups: list[Group]) -> list[Group]:
                 popu += seriousness**2 * ( -( (grups[i].experience_level + grups[i].year_of_study) - (grups[j].experience_level + grups[j].year_of_study) )**2 + 49)
                 popu += 0.5 * seriousness**2 * ( -abs(grups[i].programming_skills - grups[j].programming_skills)**2 + 100 )
                 popu += 13 * seriousness**2 * len(grups[i].roles - grups[j].roles)
-                popu += 3 * seriousness**2 * len(set(list(grups[i].interest_in_challenges)) | set(list(grups[j].interest_in_challenges)))
+                popu += 3 * seriousness**2 * len(set(list(grups[i].interest_in_challenges)) & set(list(grups[j].interest_in_challenges)))
 
                 popu += 2.5/(seriousness**2) * (-(grups[i].age - grups[j].age)**2 + 100)
                 popu += 200/(seriousness**3) * len(grups[i].interests & grups[j].interests)
@@ -65,6 +66,19 @@ def algorithm(grups: list[Group]) -> list[Group]:
 
     return(output)
 
+def compatibility(group: Group, participants: list[RawParticipant]) -> Dict[str, int]:
+    compatibility = dict([(i, 0) for i in ("total", "language", "availability", "objective", "team_size", "challenge", "role", "experience", "skills", "interest")])
+
+    g_participants: list[RawParticipant] = []
+
+    for i in group.ids:
+        for j in participants:
+                if j.id == i: g_participants.append(j)
+
+    compatibility.update(["language", min(len(group.preferred_languages), 1)])
+    compatibility.update(["availability", sum[((17*len(participant_to_group(i).availability & group.availability)**2)/425 for i in g_participants)] / len(group.ids)])
+    compatibility.update(["objective", sum[((17*len(participant_to_group(i).availability & group.availability)**2)/425 for i in g_participants)] / len(group.ids) ])
+
 
 def main() -> None: # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/datathon_participants.json
     
@@ -87,12 +101,14 @@ def main() -> None: # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/da
     
     print(f"\nDone! (in {it} iterations)")
 
+    print(len(grups))
 
-    for i in grups:
-        for j in (i.ids):
-            for k in participants:
-                if k.id == j: print(k.preferred_team_size, end=" ")
-        print("\n")
+    #for i in grups:
+    #    print(f"({i.objective})", end=" ")
+    #    for j in (i.ids):
+    #        for k in participants:
+    #            if k.id == j: print(k.name, end="   ")
+    #    print("\n")
 
 if __name__ == "__main__":
     main()
