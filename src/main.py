@@ -4,6 +4,7 @@ import yogi
 from collect import RawParticipant, collect_participants
 from group import Group, participant_to_group
 from friends import bidirectional_friends
+import group
 from objectiu import objective_level
 
 def algorithm(grups: list[Group]) -> list[Group]:
@@ -16,11 +17,11 @@ def algorithm(grups: list[Group]) -> list[Group]:
         it = 0
 
         popu_max = (0, 0)
-        
+
         if grups[i].preferred_team_size <= len(grups[i].ids): pass
-        
+
         for j in range(len(grups)):
-            
+
             popu = 0
 
             it += 1
@@ -50,7 +51,7 @@ def algorithm(grups: list[Group]) -> list[Group]:
         ranking.setdefault(popu_max[0], 0)
         ranking.update([(popu_max[0], 1 + ranking.get(popu_max[0]))])
 
-    ranking = sorted(ranking.items(), key=lambda x: x[1], reverse=True)    
+    ranking = sorted(ranking.items(), key=lambda x: x[1], reverse=True)
 
     garbell = [False] * len(grups)
 
@@ -67,23 +68,32 @@ def algorithm(grups: list[Group]) -> list[Group]:
     return(output)
 
 def compatibility(group: Group, participants: list[RawParticipant]) -> Dict[str, int]:
-    compatibility = dict([(i, 0) for i in ("total", "language", "availability", "objective", "team_size", "challenge", "role", "experience", "skills", "interest")])
+    compatibility = dict([(i, 0) for i in ("total", "language", "availability", "objective", "team_size", "challenge", "role", "experience", "skills", "age")])
 
-    g_participants: list[RawParticipant] = []
+    g_participants: list[Group] = []
 
     for i in group.ids:
         for j in participants:
-                if j.id == i: g_participants.append(j)
+                if j.id == i: g_participants.append(participant_to_group(j))
 
-    compatibility.update(["language", min(len(group.preferred_languages), 1)])
-    compatibility.update(["availability", sum[((17*len(participant_to_group(i).availability & group.availability)**2)/425 for i in g_participants)] / len(group.ids)])
-    compatibility.update(["objective", sum[((17*len(participant_to_group(i).availability & group.availability)**2)/425 for i in g_participants)] / len(group.ids) ])
+    compatibility.update([("language", min(len(group.preferred_languages), 1))])
+    compatibility.update([("availability", sum([(len(i.availability & group.availability)/5) for i in g_participants]) / len(group.ids))])
+    compatibility.update([("objective", sum([((3-abs(i.objective - group.objective))/3) for i in g_participants]) / len(group.ids))])
+    compatibility.update([("team_size", sum([((2-abs(i.preferred_team_size - len(group.ids)))/2) for i in g_participants]) / len(group.ids))])
+    compatibility.update([("challenge", sum([(min(len(set(list(i.interest_in_challenges)) & set(list(group.interest_in_challenges))), 1)) for i in g_participants]) / len(group.ids))])
+    compatibility.update([("role", len(group.roles) / len(group.ids))])
+    compatibility.update([("experience", sum([((7-abs((i.experience_level+i.year_of_study) - (group.experience_level+group.year_of_study)))/7) for i in g_participants]) / len(group.ids))])
+    compatibility.update([("skills", sum([((9-abs(i.programming_skills - group.programming_skills))/9) for i in g_participants]) / len(group.ids))])
+    compatibility.update([("age", sum([((10-abs(i.age - group.age))/10) for i in g_participants]) / len(group.ids))])
 
+    compatibility.update([("total", (499*compatibility.get("language") + 425*compatibility.get("availability") + 508*compatibility.get("objective") + 152*compatibility.get("team_size") + 49*(compatibility.get("objective")**2)*compatibility.get("experience") + 9*(compatibility.get("objective")**2)*compatibility.get("challenge") + 13*(compatibility.get("objective")**2)*compatibility.get("role") + 50*(compatibility.get("objective")**2)*compatibility.get("skills") + 13/(compatibility.get("objective")**2)*compatibility.get("age"))/(499 + 425 + 508 + 152 + 49*(group.objective**2) + 9*(group.objective**2) + 50*(group.objective**2) + 13*(group.objective**2) + 250/(group.objective**2)))])
+
+    return compatibility
 
 def main() -> None: # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/datathon_participants.json
-    
+
     print("Please type the path of the participants json file:")
-    
+
     participants = collect_participants(yogi.read(str)) #/home/max/Datathon/Datathon-2024/data/datathon_participants.json
     grups: list[Group] = [participant_to_group(participant) for participant in participants]
 
@@ -98,17 +108,16 @@ def main() -> None: # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/da
 
         grups = algorithm(grups)
         old_length, length = length, len(grups)
-    
+
     print(f"\nDone! (in {it} iterations)")
 
-    print(len(grups))
+    compatibilities = [(compatibility(i, participants).get("total", 0)) for i in grups]
 
-    #for i in grups:
-    #    print(f"({i.objective})", end=" ")
-    #    for j in (i.ids):
-    #        for k in participants:
-    #            if k.id == j: print(k.name, end="   ")
-    #    print("\n")
+    comp_copy = compatibilities[::]
+    comp_copy.sort()
+
+    mediana = (comp_copy[int(len(comp_copy)/2)])
+    mitjana = (sum(comp_copy)/len(comp_copy))
 
 if __name__ == "__main__":
     main()
