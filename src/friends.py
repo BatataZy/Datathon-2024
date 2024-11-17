@@ -1,7 +1,6 @@
 from pathlib import Path
 import os
 from collect import collect_participants
-from yogi import read
 
 def friends(a,b) -> bool:
     if b.ids in a.friend_registration:

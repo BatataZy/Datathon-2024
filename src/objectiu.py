@@ -1,5 +1,4 @@
 import re
-import yogi
 from collect import RawParticipant, collect_participants
 def objective_level(text:str):
     # Paraules clau per a cada opció

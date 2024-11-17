@@ -1,6 +1,5 @@
 from linecache import updatecache
 from typing import Dict
-import yogi
 from collect import RawParticipant, collect_participants
 from group import Group, participant_to_group
 from friends import bidirectional_friends
@@ -69,6 +68,9 @@ def algorithm(grups: list[Group]) -> list[Group]:
     return(output)
 
 def compatibility(group: Group, participants: list[RawParticipant]) -> Dict[str, int]:
+
+    if len(group.ids) == 1: return dict([("total", 1)])
+
     compatibility = dict([(i, 0) for i in ("total", "language", "availability", "objective", "team_size", "challenge", "role", "experience", "skills", "age")])
 
     g_participants: list[Group] = []
