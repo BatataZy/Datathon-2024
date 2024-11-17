@@ -1,49 +1,77 @@
+from typing import Dict
+from matplotlib.style import available
+from numpy import sort
 import yogi
 from collect import collect_participants
 from group import Group, participant_to_group
 from friends import bidirectional_friends
+import group
+
+def algorithm(grups: list[Group]) -> list[Group]:
+
+    output = []
+    ranking = dict()
+    popularity = [0] * len(grups)
+
+    for i in range(len(grups)): # Anem afegint persona a persona
+        it = 0
+
+        popu_max = (0, 0)
+        
+        if grups[i].preferred_team_size <= len(grups[i].ids): pass
+        
+        for j in range(len(grups)):
+            
+            popu = 0
+
+            it += 1
+            if i != j and grups[j].preferred_team_size > len(grups[j].ids):
+
+                seriousness = (grups[i].objective*len(grups[i].ids) + grups[j].objective*len(grups[j].ids))/(len(grups[i].ids)+len(grups[j].ids))
+
+                if bidirectional_friends(grups[i], grups[j]): popu += 1009
+                if grups[i].preferred_languages & grups[j].preferred_languages != set([]): popu += 499
+                popu += 17 * len(grups[i].availability & grups[j].availability)**2
+                popu += 127 * (-(abs( grups[i].objective - grups[j].objective ))**2 + 4)
+                popu += 19 * (-( grups[i].preferred_team_size - grups[j].preferred_team_size )**2 + 4)
+
+                popu += seriousness**2 * ( -( (grups[i].experience_level + grups[i].year_of_study) - (grups[j].experience_level + grups[j].year_of_study) )**2 + 49)
+                popu += 0.5 * seriousness**2 * ( -abs(grups[i].programming_skills - grups[j].programming_skills)**2 + 100 )
+                popu += 13 * seriousness**2 * len(grups[i].roles - grups[j].roles)
+                popu += 3 * seriousness**2 * len(set(list(grups[i].interest_in_challenges)) | set(list(grups[j].interest_in_challenges)))
+
+                popu += 2.5/(seriousness**2) * (-(grups[i].age - grups[j].age)**2 + 100)
+                popu += 200/(seriousness**3) * len(grups[i].interests & grups[j].interests)
+
+                if popu > popu_max[1]: popu_max = (j, popu)
+
+            else: pass
+
+        popularity[i] = popu_max[0]
+        ranking.setdefault(popu_max[0], 0)
+        ranking.update([(popu_max[0], 1 + ranking.get(popu_max[0]))])
+
+    ranking = sorted(ranking.items(), key=lambda x: x[1], reverse=True)    
+
+    garbell = [False] * len(grups)
+
+    for i in ranking:
+        if garbell[i[0]] == False and garbell[popularity[i[0]]] == False:
+            output.append(grups[i[0]] + grups[popularity[i[0]]])
+            garbell[i[0]] = True
+            garbell[popularity[i[0]]] = True
+
+    for i in range(len(garbell)):
+        if garbell[i] == False:
+            output.append(grups[i])
+
+    return(output)
+
 
 def main() -> None: # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/datathon_participants.json
     participants = collect_participants(yogi.read(str)) #/home/max/Datathon/Datathon-2024/data/datathon_participants.json
 
     grups: list[Group] = [participant_to_group(participant) for participant in participants]
-    for equip in grups: # Anem afegint persona a persona
-        compatibilitat: list[float] = [0] * len(participants) # Farem puntuació per cada persona per veure la compatibilitat
-        # Primer mirem si té amics en comú per poder-los combinar directament
-        for altres_equips in grups:
-            if equip != altres_equips:
-                
-        
-        
-        '''
-        if equip.friend_registration != set([]): # Si no està buit, fem els participants.
-            for amic in equip.friend_registration:
-                posicio = 0 # A revisar si podem utilitzar més cops.
-                for x in grups: # Recorres TOTS ELS PARTICIPANTS
-                    if amic in x.ids:
-                        # AFEGIM FENT "ADD" EL equip A LA LLISTA TOTS ELS AMICS AL equip
-                        for i in x.ids:
-                            if amic == i:
-                                # AFEGIM FENT "ADD" EL equip A LA LLISTA TOTS ELS AMICS AL equip
-                                equip = equip + x 
-                                compatibilitat[posicio] = 0
-        
-
-
-                    posicio += 1
-        '''
-      # Fem el dels amics i l'afegim si encara no està
-
-        # Mirem que tinguin el mateix llenguatge
-        
-
-        
-    # PRIMER MIREM ELS CASOS QUE S'HAN DE COMPLIR SÍ O SÍ
-
-    # DESPRÉS ELS QUE SÓN MOLT IMPORTANT
-    
-
-    # FINALMENT ÚLTIMES COSETES QUE SUMEN PUNTS
 
 
 if __name__ == "__main__":

@@ -10,6 +10,7 @@ class Group:
     ids: Set[str]
 
     #Ordered list of main points
+    age: float
     friend_registration: Set[str]
     preferred_languages: Set[str]
     availability: Set[str]
@@ -19,13 +20,14 @@ class Group:
     roles: Set[str]
     experience_level: float
     year_of_study: float
-    programming_skills: Dict[str, int]
+    programming_skills: int
     hackathons_done: float
     interests: Set[str]
 
     #Group generator function from participant data
-    def __init__(self, ids, friend_registration, preferred_languages, availability, objective, preferred_team_size, interest_in_challenges, roles, experience_level, year_of_study, programming_skills, hackathons_done, interests):
+    def __init__(self, ids, age, friend_registration, preferred_languages, availability, objective, preferred_team_size, interest_in_challenges, roles, experience_level, year_of_study, programming_skills, hackathons_done, interests):
         self.ids = ids
+        self.age = age
         self.friend_registration = friend_registration
         self.preferred_languages = preferred_languages
         self.availability = availability
@@ -44,13 +46,10 @@ class Group:
         interest_in_challenges = dict([])
         for i in (set(list(self.interest_in_challenges)) | set(list(other.interest_in_challenges))):
             interest_in_challenges.setdefault(i, self.interest_in_challenges.get(i, 0) + other.interest_in_challenges.get(i, 0))
-
-        programming_skills = dict([])
-        for i in (set(list(self.programming_skills)) | set(list(self.programming_skills))):
-            programming_skills.setdefault(i, max(self.programming_skills.get(i, 0), other.programming_skills.get(i, 0)))
                 
         return Group(
             self.ids | other.ids,
+            (self.age*len(self.ids) + other.age*len(other.ids))/(len(self.ids) + len(other.ids)),
             self.friend_registration & other.friend_registration,
             self.preferred_languages & other.preferred_languages,
             self.availability | other.availability,
@@ -60,7 +59,7 @@ class Group:
             self.roles | other.roles,
             (self.experience_level*len(self.ids) + other.experience_level*len(other.ids))/(len(self.ids) + len(other.ids)),
             (self.year_of_study*len(self.ids) + other.year_of_study*len(other.ids))/(len(self.ids) + len(other.ids)),
-            programming_skills,
+            max(self.programming_skills, other.programming_skills),
             (self.hackathons_done*len(self.ids) + other.hackathons_done*len(other.ids))/(len(self.ids) + len(other.ids)),
             self.interests | other.interests,
         )
@@ -68,6 +67,7 @@ class Group:
 def participant_to_group(participant:RawParticipant) -> Group:
 
     ids = set([participant.id])
+    age = float(participant.age)
     friend_registration = set(participant.friend_registration)
     preferred_languages = set(participant.preferred_languages)
     availability = set(i for i in list(participant.availability) if participant.availability.get(i) == True)
@@ -89,8 +89,10 @@ def participant_to_group(participant:RawParticipant) -> Group:
         case "Masters": year_of_study = 5.
         case "PhD": year_of_study = 6.
     
-    programming_skills = participant.programming_skills
+    values = [participant.programming_skills.get(i) for i in list(participant.programming_skills)]
+
+    programming_skills = max(values)
     hackathons_done = float(participant.hackathons_done)
     interests = set(participant.interests)
 
-    return Group(ids, friend_registration, preferred_languages, availability, objective, preferred_team_size, interest_in_challenges, roles, experience_level, year_of_study, programming_skills, hackathons_done, interests)
+    return Group(ids, age, friend_registration, preferred_languages, availability, objective, preferred_team_size, interest_in_challenges, roles, experience_level, year_of_study, programming_skills, hackathons_done, interests)

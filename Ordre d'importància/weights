@@ -1,8 +1,8 @@
-1 friend_registration # Només si coincideixen
+p1 friend_registration # Només si coincideixen
 
 2 preferred_languages # Si no coincideixen, descartar la esta. Farem una llista de la gent que parla el mateix idioma. 
 
-3 avaliability # CASOS EXTREMS molt important
+3 availability # CASOS EXTREMS molt important
 
 4 objective # Molt important
 
