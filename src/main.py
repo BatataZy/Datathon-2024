@@ -121,3 +121,4 @@ def main() -> None: # C:/Users/GABO.LOPEZ/Documents/GitHub/Datathon-2024/data/da
 
 if __name__ == "__main__":
     main()
+    
